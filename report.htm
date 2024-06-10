@@ -520,7 +520,7 @@
             }
             function renderGrid() {
                 let cols = [];
-                cols.push({name: "state", type: "text"});
+                cols.push({name: "state", title: "State Name", type: "text"});
                 cols.push({ name: data.minYear, type: "text"});
                 years.slice(1).forEach(x=>{
                     cols.push({name: x, type: "text"});
