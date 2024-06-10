@@ -470,45 +470,6 @@
                 function isLT(num1, num2, epsilon = 0.000001) {
                     return num1 < num2 - epsilon;
                 }
-                function getColor(d) {
-                    d = parseFloat(d);
-                    let output = "";
-                    if (d >= 20.00) {
-                        output = '#0a1a33';
-                    } else if (d < 20.00 && d >= 5.00) {
-                        output = '#0f2342';
-                    } else if (d < 5.00 && d >= 1.00) {
-                        output = '#1a3661';
-                    } else if (d < 1.00 && d >= 0.80) {
-                        output = '#26487a';
-                    } else if (d < 0.80 && d >= 0.60) {
-                        output = '#005b96';
-                    } else if (d < 0.60 && d >= 0.40) {
-                        output = '#6497b1';
-                    } else if (d < 0.40 && d >= 0.20) {
-                        output = '#b3cde0';
-                    } else if (d < 0.20 && d >= 0.00) {
-                        output = '#ffffff';
-                    } else if (d < 0.00 && d >= -0.20) {
-                        output = '#fff33b';
-                    } else if (d < -0.20 && d >= -0.40) {
-                        output = '#fdc70c';
-                    } else if (d < -0.40 && d >= -0.60) {
-                        output = '#f3903f';
-                    } else if (d < -0.60 && d >= -0.80) {
-                        output = '#ed683c';
-                    } else if (d < -0.80 && d >= -1.00) {
-                        output = '#e93e3a';
-                    } else if (d < -1.00 && d >= -5.00) {
-                        output = '#b01111';
-                    } else if (d < -5.00 && d >= -20.00) {
-                        output = '#5e0000';
-                    } else {
-                        output = '';
-                    }
-                    return output;
-                }
-
 
                 function style(feature) {
                     return {
@@ -553,22 +514,60 @@
                     let entry = data.dataset.filter(x => x.state == state)[0];
                     return entry[year + " rawchange"];
                 }
+
+                function getColor(d) {
+                    d = parseFloat(d);
+                    let output = "";
+                    if (d >= 20.00) {
+                        output = '#0a1a33';
+                    } else if (d < 20.00 && d >= 5.00) {
+                        output = '#0f2342';
+                    } else if (d < 5.00 && d >= 1.00) {
+                        output = '#1a3661';
+                    } else if (d < 1.00 && d >= 0.80) {
+                        output = '#26487a';
+                    } else if (d < 0.80 && d >= 0.60) {
+                        output = '#005b96';
+                    } else if (d < 0.60 && d >= 0.40) {
+                        output = '#6497b1';
+                    } else if (d < 0.40 && d >= 0.20) {
+                        output = '#b3cde0';
+                    } else if (d < 0.20 && d >= 0.00) {
+                        output = '#ffffff';
+                    } else if (d < 0.00 && d >= -0.20) {
+                        output = '#fff33b';
+                    } else if (d < -0.20 && d >= -0.40) {
+                        output = '#fdc70c';
+                    } else if (d < -0.40 && d >= -0.60) {
+                        output = '#f3903f';
+                    } else if (d < -0.60 && d >= -0.80) {
+                        output = '#ed683c';
+                    } else if (d < -0.80 && d >= -1.00) {
+                        output = '#e93e3a';
+                    } else if (d < -1.00 && d >= -5.00) {
+                        output = '#b01111';
+                    } else if (d < -5.00 && d >= -20.00) {
+                        output = '#5e0000';
+                    } else {
+                        output = '#000000';
+                    }
+                    return output;
+                }
                 const legend = L.control({ position: 'bottomright' });
                 legend.onAdd = function (map) {
                     const div = L.DomUtil.create('div', 'info legend');
                     const grades = [20, 5, 1, 0.8, 0.6, 0.4, 0.2, 0, -0.2, -0.4, -0.6, -0.8, -1, -5, -20];
                     const labels = [];
                     let from, to;
-                    for (let i = 0; i < grades.length; i++) {
+                    for (let i = 0; i < grades.length-1; i++) {
                         from = grades[i];
                         to = grades[i + 1];
-                        if (i == 0) {
-                            labels.push(`<i style="background:${getColor(from)}"></i> &gt; ${from}`);
-                        } else if (i == grades.length - 1) {
-                            labels.push(`<i style="background:${getColor(from)}"></i> &lt; ${from}`);
-                        } else {
-                            labels.push(`<i style="background:${getColor(to)}"></i> ${from} to ${to}`);
+                        if(!from==0 && !to==0 && from >0) {
+                            to = (to + 0.01).toFixed(2);
+                        } else if (!from==0 && !to==0 && from < 0) {
+                            from = (from - 0.01).toFixed(2);
                         }
+                        labels.push(`<i style="background:${getColor(to)}"></i> ${from} to ${to}`);
                     }
                     div.innerHTML = labels.join('<br>');
                     return div;
