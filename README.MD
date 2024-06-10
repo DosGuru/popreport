@@ -1,41 +1,21 @@
-
-
 ## **US Population API Extrapulator Deluxe**
 
-  
-
 **INSTALLATION**
-
 To run this application, download, and extract to a folder. Open *report.htm* in a browser to view a 100% dynamic report that is rendered from a highly processed version of the source data from the API.
-
-  
 
 Open data.htm to download a CSV of the API source data. When opening the page, a csv with a unique identifier is automatically generated and downloaded.
 
-  
-
 This code makes use of CDN libraries (in an effort to minimize footprint), so an internet connection is required to run. In the rare event that a vpn/proxy prevents accessing a CDN reference, you will need to retry from a machine that has an unobstructed internet connection. Where possible, CDN references use SRI hashes to ensure security.
 
-  
-
 This has been tested in Firefox, Chrome, and Edge in a windows environment, and Safari, Edge, and Chrome in MacOS.
-
-  
-  
 
 **CODE OVERVIEW**
 
 This code is pure HTML, CSS, and Javascript.
 
-  
-
 The logic for making an HTTP GET connection with the API, consuming the payload, transforming the source data is in */scripts/module_data.js*. In addition to meeting the requirements for the CSV output, it calculates other aggregate data and extrapolates additional values that is used in report generation.
 
-  
-
 */data.htm* is just a HTML wrapper to call the data module to export CSV data.
-
-  
 
 */report.htm* is responsible for rendering the report. Leveraging the data module to get the transformed data, it further massages, slices, and dices these numbers.
 
@@ -63,5 +43,3 @@ Misc JS libraries (bootstrap, jquery, fontawesome) are used for formatting the r
 **The solution is available here: https://github.com/DosGuru/popreport** 
 7. *"All data processing from the API and into the CSV must be in code"*
 **The data module uses a XMLHttpRequest to perform an HTTP GET against the API.  All CSV processing is done dynamically in pure javascript. Major libraries used are mentioned above.**
-
-

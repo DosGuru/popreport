@@ -154,18 +154,6 @@
                 <span class="label1" id="lbl_loss_period_pct"></span>
             </div>
         </div>
-        <div class="row">
-            <div class="col" style="text-align: center; padding-top:20px">
-                <H3><div style="color:#FF0000;"><i class="fa-solid fa-fire-flame-curved"></i> Most Volatile State</div></H3>
-                <span id="lbl_max_volatile_state" class="label1"></span> <br>
-                <i>(<span id="lbl_max_volatile_cv"></span> coefficient of variation)</i>
-                <br><br>
-                <H3><div style="color:#0000FF;"><i class="fa-solid fa-snowflake"></i> Least Volatile State</div></H3>  
-                <span id="lbl_min_volatile_state" class="label1"></span><br>
-                <i></i>(<span id="lbl_min_volatile_cv"></span> coefficient of variation)</i>
-            </div>
-
-        </div>
         <div class="row reportpage">
             <div class="col">
                 <h1><i class="fa-solid fa-map-location-dot"></i> Population Change, Map Overview</h1>
@@ -243,11 +231,6 @@
                 let period_state_minChange = "";
                 let period_year_minChange = "";
 
-                let min_volatility = Infinity;
-                let max_volatility = 0;
-                let min_state_volatility = "";
-                let max_state_volatility = "";
-
                 data.dataset.forEach(x => {
                     if (x.totalDiff > maxDiff) {
                         maxDiff = x.totalDiff;
@@ -266,16 +249,6 @@
                     if (parseFloat(x.totalChange) < minChange) {
                         minChange = x.totalChange;
                         state_minChange = x.state;
-                    }
-
-                    if(x.volatility > max_volatility) {
-                        max_volatility = x.volatility;
-                        max_state_volatility = x.state;
-                    }
-
-                    if(x.volatility < min_volatility) {
-                        min_volatility = x.volatility;
-                        min_state_volatility = x.state;
                     }
 
                     years.forEach(y => {
@@ -312,10 +285,6 @@
                 $("#lbl_loss_overall_pct").text(state_minChange + ' ' + minChange.toLocaleString() + '%');
                 $("#lbl_loss_period").text(period_state_minDiff + ' ' + period_minDiff.toLocaleString() + ' people in ' + period_year_minDiff);
                 $("#lbl_loss_period_pct").text(period_state_minChange + ' ' + period_minChange.toLocaleString() + ' % in ' + period_year_minChange);
-                $("#lbl_max_volatile_state").text(max_state_volatility);
-                $("#lbl_min_volatile_state").text(min_state_volatility);
-                $("#lbl_max_volatile_cv").text(max_volatility.toFixed(5));
-                $("#lbl_min_volatile_cv").text(min_volatility.toFixed(5));
             }
             function getStateDropDown(id, dataset) {
                 let dropdown = document.getElementById(id);

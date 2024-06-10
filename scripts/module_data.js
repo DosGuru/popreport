@@ -41,12 +41,6 @@ const DataModule = (() => {
             x[maxYear + " Factors"] = getPrimeFactors(x[maxYear]).join(';');
             x.totalDiff = (x[maxYear] - x[minYear]);
             x.totalChange = ((x.totalDiff / x[minYear]) * 100).toFixed(2);
-
-            let popData = [];
-            for(let i = +minYear; i <= +maxYear; i++) {
-                popData.push(x[i]);
-            }
-            x.volatility = +calculateVolatility(popData);
         });
         // calculate total data
         totalData[minYear] = dataset.reduce((acc, item) => acc + item[minYear], 0);
@@ -141,14 +135,6 @@ const DataModule = (() => {
             }
         }
         return value;
-    }
-    //this function performs a standard deviation calculation against an array of population data, and divides it by the mean to get a coefficient of variation 
-    function calculateVolatility(array) {
-        let n = array.length;
-        let mean = array.reduce((a, b) => a + b) / n;
-        let standardDeviation = Math.sqrt(array.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / n);
-        let coefficientOfVariation = standardDeviation / mean;
-        return coefficientOfVariation;
     }
 return {
     getData, getPrimeFactors, getCsv
