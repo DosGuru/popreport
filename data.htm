@@ -3,7 +3,6 @@
 <head>
     <script src="scripts/module_data.js"></script>
     <script>
-
         function download(content, fileName) {
             let blob = new Blob([content], { type: 'text/csv' });
             let url = URL.createObjectURL(blob);
@@ -14,15 +13,12 @@
             a.click();
             document.body.removeChild(a);
         }
-
         window.onload = () => {
             let csvData = DataModule.getCsv();
             let filename = `data-${crypto.randomUUID()}.csv`;
             download(csvData, filename);
         };
-
     </script>
-
 </head>
 <body>
 </body>
