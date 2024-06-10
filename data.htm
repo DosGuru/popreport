@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="scripts/module_data.js"></script>
+    <script>
+
+        function download(content, fileName) {
+            let blob = new Blob([content], { type: 'text/csv' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', fileName);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        window.onload = () => {
+            let csvData = DataModule.getCsv();
+            let filename = `data-${crypto.randomUUID()}.csv`;
+            download(csvData, filename);
+        };
+
+    </script>
+
+</head>
+<body>
+</body>
+</html>

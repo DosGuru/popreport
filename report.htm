@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with State Data</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'Roboto';
+        }
+        h1 {
+            color:#0d2d69 !important;
+            border-style: solid;
+            border-width: 2px 0px 2px 0px;
+            border-color:#13439c;
+            background-color:#e1e7f2;
+            padding: 12px 5px 12px 5px;
+        }
+        h3 {
+            color:#848385 !important;
+        }
+        .label1 {
+            font-weight: 600;
+            font-size: 1.3em;
+            color: #490d6e;
+            padding-left: 5px;
+        }
+        #lbl_minyear, #lbl_maxyear {
+            color:#7d0b0d;
+        }
+        .leaflet-container {
+            height: 400px;
+            width: 600px;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+        .reportpage {
+            padding-top: 140px;
+        }
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        .legend {
+            text-align: left;
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+        .txt_large {
+            font-size: 3.0em;
+            font-weight: 600;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid-theme.min.css"
+        integrity="sha512-jx8R09cplZpW0xiMuNFEyJYiGXJM85GUL+ax5G3NlZT3w6qE7QgxR4/KE1YXhKxijdVTDNcQ7y6AJCtSpRnpGg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js "></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsgrid/1.5.3/jsgrid.min.js"
+        integrity="sha512-blBYtuTn9yEyWYuKLh8Faml5tT/5YPG0ir9XEABu5YCj7VGr2nb21WPFT9pnP4fcC3y0sSxJR1JqFTfTALGuPQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="scripts/module_data.js"></script>
+    <script type="text/javascript" src="scripts/stategeo.js"></script>
+</head>
+<body>
+    <div class="container-fluid" style="padding:50px;">
+        <div class="row">
+            <div class="col">
+                <div class="txt_large">
+                    <i class="fa-solid fa-flag-usa"></i> US Population Change from <span id="lbl_minyear"></span> to <span id="lbl_maxyear"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row reportpage">
+            <div class="col">
+                <H1><i class="fa-solid fa-people-group"></i> Population and Growth - <span id="lbl_region">All States</span></H1>
+                <br>
+                <select id="select_state"></select> <i class="fa-solid fa-angles-left"></i> Select a state from the dropdown to filter results.
+                <hr>
+                <canvas id='chart_uspop'></canvas>
+            </div>
+
+        </div>
+        <div class="row reportpage">
+            <div class="col">
+                <h1><i class="fa-solid fa-magnifying-glass-chart"></i>  Trends and Statistics</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <H2 style="color:#13439c"><i class="fa-solid fa-circle-up"></i>  Population Increase</H2>
+                <br>
+                <h3>Most Growth Overall </h3>
+                <span class="label1" id="lbl_growth_overall"></span>
+
+                <h3>Most Growth Overall By Percentage</h3>
+                <span class="label1" id="lbl_growth_overall_pct"></span>
+
+                <H3>Largest Population Growth Period</H3>
+                <span class="label1" id="lbl_growth_period"></span>
+
+                <H3>Largest Population Growth Period By Percentage </H3>
+                <span class="label1" id="lbl_growth_period_pct"></span>
+            </div>
+            <div class="col">
+                <H2 style="color:#7d0b0d"><i class="fa-solid fa-circle-down"></i> Population Decrease</H2>
+                <br>
+                <h3>Most Population Decrease Overall </h3>
+                <span class="label1" id="lbl_loss_overall"></span>
+
+                <h3>Most Population Decrease Overall By Percentage</h3>
+                <span class="label1" id="lbl_loss_overall_pct"></span>
+
+                <H3>Largest Population Decrease Period</H3>
+                <span class="label1" id="lbl_loss_period"></span>
+
+                <H3>Largest Population Decrease Period By Percentage </H3>
+                <span class="label1" id="lbl_loss_period_pct"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" style="text-align: center; padding-top:20px">
+                <H3><div style="color:#FF0000;"><i class="fa-solid fa-fire-flame-curved"></i> Most Volatile State</div></H3>
+                <span id="lbl_max_volatile_state" class="label1"></span> <br>
+                <i>(<span id="lbl_max_volatile_cv"></span> coefficient of variation)</i>
+                <br><br>
+                <H3><div style="color:#0000FF;"><i class="fa-solid fa-snowflake"></i> Least Volatile State</div></H3>  
+                <span id="lbl_min_volatile_state" class="label1"></span><br>
+                <i></i>(<span id="lbl_min_volatile_cv"></span> coefficient of variation)</i>
+            </div>
+
+        </div>
+        <div class="row reportpage">
+            <div class="col">
+                <h1><i class="fa-solid fa-map-location-dot"></i> Population Change, Map Overview</h1>
+                <br>
+                <select id="select_year"></select> <i class="fa-solid fa-angles-left"></i> Select a year from the dropdown to filter results.
+                <hr>
+                <div id="map"></div>
+            </div>
+        </div>
+        <div class="row reportpage">
+            <div class="col">
+                <H1><i class="fa-solid fa-table"></i> A Look at the Data</H1>
+                Below is a transformed representation of the data pulled from the API at <i>https://datausa.io/api/data?drilldowns=State&measures=Population</i>.
+                <br><br>
+                <a href="data.htm" target="_blank"><span class="btn btn-primary">Download CSV</span></a>
+                <br><hr><br>
+
+                <div id="grid_data"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var data = [];
+        var totaldata = {};
+        var years = [];
+        var populationChart;
+        var map;
+        $(document).ready(function () {
+            data = DataModule.getData();
+            years = Array.from({ length: +data.maxYear - +data.minYear + 1 }, (v, i) => +data.minYear + i);
+            years = years.map(String);
+            $("#lbl_minyear").text(data.minYear);
+            $("#lbl_maxyear").text(data.maxYear);
+            getStateDropDown('select_state', data.dataset)
+            getYearDropDown('select_year', years.slice(1));
+            $("#select_state").change(function () {
+                let selectedState = $(this).val();
+                if(selectedState=="us") {
+                    $("#lbl_region").text("All States");
+                } else {
+                    $("#lbl_region").text(selectedState);
+                }
+                renderUsChart(selectedState);
+            });
+            $("#select_year").change(function () {
+                let selectedYear = $(this).val();
+                renderMap(selectedYear);
+            });
+            calculateSummary();
+            renderUsChart();
+            renderMap();
+            renderGrid();
+            function calculateSummary() {
+                let maxDiff = 0;
+                let state_maxDiff = "";
+                let maxChange = 0;
+                let state_maxChange = "";
+
+                let period_maxDiff = 0;
+                let period_state_maxDiff = "";
+                let period_year_maxDiff = "";
+                let period_maxChange = 0;
+                let period_state_maxChange = "";
+                let period_year_maxChange = "";
+
+                let minDiff = Infinity;
+                let state_minDiff = "";
+                let minChange = Infinity;
+                let state_minChange = "";
+
+                let period_minDiff = Infinity;
+                let period_state_minDiff = "";
+                let period_year_minDiff = "";
+                let period_minChange = Infinity;
+                let period_state_minChange = "";
+                let period_year_minChange = "";
+
+                let min_volatility = Infinity;
+                let max_volatility = 0;
+                let min_state_volatility = "";
+                let max_state_volatility = "";
+
+                data.dataset.forEach(x => {
+                    if (x.totalDiff > maxDiff) {
+                        maxDiff = x.totalDiff;
+                        state_maxDiff = x.state
+                    }
+                    if (parseFloat(x.totalChange) > maxChange) {
+                        maxChange = x.totalChange;
+                        state_maxChange = x.state;
+                    }
+
+
+                    if (x.totalDiff < minDiff) {
+                        minDiff = x.totalDiff;
+                        state_minDiff = x.state
+                    }
+                    if (parseFloat(x.totalChange) < minChange) {
+                        minChange = x.totalChange;
+                        state_minChange = x.state;
+                    }
+
+                    if(x.volatility > max_volatility) {
+                        max_volatility = x.volatility;
+                        max_state_volatility = x.state;
+                    }
+
+                    if(x.volatility < min_volatility) {
+                        min_volatility = x.volatility;
+                        min_state_volatility = x.state;
+                    }
+
+                    years.forEach(y => {
+                        if (x[y + " diff"] > period_maxDiff) {
+                            period_maxDiff = x[y + " diff"];
+                            period_state_maxDiff = x.state;
+                            period_year_maxDiff = y;
+                        }
+                        if (x[y + " diff"] < period_minDiff) {
+                            period_minDiff = x[y + " diff"];
+                            period_state_minDiff = x.state;
+                            period_year_minDiff = y;
+                        }
+                    });
+                    years.slice(1).forEach(y => {
+                        if (parseFloat(x[y + " rawchange"]) > period_maxChange) {
+                            period_maxChange = x[y + " rawchange"];
+                            period_state_maxChange = x.state;
+                            period_year_maxChange = y;
+                        }
+                        if (parseFloat(x[y + " rawchange"]) < period_minChange) {
+                            period_minChange = x[y + " rawchange"];
+                            period_state_minChange = x.state;
+                            period_year_minChange = y;
+                        }
+                    });
+                });
+                $("#lbl_growth_overall").text(state_maxDiff + ' +' + maxDiff.toLocaleString() + ' people');
+                $("#lbl_growth_overall_pct").text(state_maxChange + ' +' + maxChange.toLocaleString() + '%');
+                $("#lbl_growth_period").text(period_state_maxDiff + ' +' + period_maxDiff.toLocaleString() + ' people in ' + period_year_maxDiff);
+                $("#lbl_growth_period_pct").text(period_state_maxChange + ' +' + period_maxChange.toLocaleString() + ' % in ' + period_year_maxChange);
+
+                $("#lbl_loss_overall").text(state_minDiff + ' -' + minDiff.toLocaleString() + ' people');
+                $("#lbl_loss_overall_pct").text(state_minChange + ' ' + minChange.toLocaleString() + '%');
+                $("#lbl_loss_period").text(period_state_minDiff + ' ' + period_minDiff.toLocaleString() + ' people in ' + period_year_minDiff);
+                $("#lbl_loss_period_pct").text(period_state_minChange + ' ' + period_minChange.toLocaleString() + ' % in ' + period_year_minChange);
+                $("#lbl_max_volatile_state").text(max_state_volatility);
+                $("#lbl_min_volatile_state").text(min_state_volatility);
+                $("#lbl_max_volatile_cv").text(max_volatility.toFixed(5));
+                $("#lbl_min_volatile_cv").text(min_volatility.toFixed(5));
+            }
+            function getStateDropDown(id, dataset) {
+                let dropdown = document.getElementById(id);
+                let option = document.createElement('option');
+                option.value = 'us';
+                option.textContent = 'All States';
+                dropdown.appendChild(option);
+
+                dataset.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item.state;
+                    option.textContent = item.state;
+                    dropdown.appendChild(option);
+                });
+            }
+            function getYearDropDown(id, yearData) {
+                let dropdown = document.getElementById(id);
+                yearData.forEach(item => {
+                    let option = document.createElement('option');
+                    option.value = item;
+                    option.textContent = item;
+                    dropdown.appendChild(option);
+                });
+            }
+            function getMinMaxWithPadding(data, padding = 0.1) {
+                let min = Math.min(...data);
+                let max = Math.max(...data);
+                let range = max - min;
+                return {
+                    min: min - range * padding,
+                    max: max + range * padding
+                };
+            }
+            function renderUsChart(stateName) {
+                let labels = years;
+                let chartDataBar = [];
+                let chartDataLine = [];
+                let stateLabel = "";
+                if (stateName == 'us' || stateName == "" || stateName == null) {
+                    years.forEach(year => {
+                        chartDataLine.push(data.aggregate[year]);
+                        chartDataBar.push(data.aggregate[year + " rawchange"] ?? '');
+                    });
+                    stateLabel = "All States";
+                } else {
+                    let stateData = data.dataset.filter(x => x.state == stateName)[0];
+                    years.forEach(year => {
+                        chartDataLine.push(stateData[year]);
+                        chartDataBar.push(stateData[year + " rawchange"] ?? '');
+                    });
+                    stateLabel = stateName;
+                }
+                let barMin = getMinMaxWithPadding(chartDataBar).min;
+                let barMax = getMinMaxWithPadding(chartDataBar).max;
+                let lineMin = getMinMaxWithPadding(chartDataLine).min;
+                let lineMax = getMinMaxWithPadding(chartDataLine).max;
+                let config = {
+                    type: 'bar',
+                    data: {
+                        labels: years,
+                        datasets: [
+                            {
+                                type: 'bar',
+                                label: stateLabel + ' Population Change % By Year',
+                                data: chartDataBar,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderWidth: 3,
+                                yAxisID: 'y-bar'
+                            },
+                            {
+                                type: 'line',
+                                label: stateLabel + ' Population By Year',
+                                data: chartDataLine,
+                                borderColor: 'rgba(192, 75, 75, 1)',
+                                backgroundColor: 'rgba(192, 75, 75, 0.2)',
+                                borderWidth: 3,
+                                fill: false,
+                                yAxisID: 'y-line'
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'category',
+                                position: 'bottom',
+                                title: {
+                                    display: true,
+                                    text: 'Year'
+                                }
+                            },
+                            'y-bar': {
+                                type: 'linear',
+                                position: 'left',
+                                min: barMin,
+                                max: barMax,
+                                title: {
+                                    display: true,
+                                    text: '% Population Change'
+                                }
+                            },
+                            'y-line': {
+                                type: 'linear',
+                                position: 'right',
+                                min: lineMin,
+                                max: lineMax,
+                                title: {
+                                    display: true,
+                                    text: 'Total Population'
+                                },
+                                grid: {
+                                    drawOnChartArea: false
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true
+                            }
+                        }
+                    }
+                };
+                if (populationChart) {
+                    populationChart.destroy();
+                }
+                populationChart = new Chart(document.getElementById('chart_uspop'), config);
+            }
+            function renderMap(year = +data.minYear + 1) {
+                if (map !== undefined) {
+                    map.remove();
+                }
+                map = L.map('map').setView([37.8, -96], 4);
+                const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+                const info = L.control();
+                info.onAdd = function (map) {
+                    this._div = L.DomUtil.create('div', 'info');
+                    this.update();
+                    return this._div;
+                };
+                info.update = function (props) {
+                    const contents = props ? `<b>${props.name}</b><br />${getPopChange(props.name, year)} % population change` : 'Hover over a state';
+                    this._div.innerHTML = `<h4>US Population Changes in ${year}</h4>${contents}`;
+                };
+                info.addTo(map);
+                function getColor(p) {
+                    d = parseFloat(p);
+                    return d > 20 ? '#08519c' :
+                        d > 5 ? '#3182bd' :
+                            d > 1 ? '#011f4b' :
+                                d > 0.8 ? '#03396c' :
+                                    d > 0.6 ? '#005b96' :
+                                        d > 0.4 ? '#6497b1' :
+                                            d > 0.2 ? '#b3cde0' :
+                                                d > 0 ? '#ffffff' :
+                                                    d > -0.2 ? '#fff33b' :
+                                                        d > -0.4 ? '#fdc70c' :
+                                                            d > -0.6 ? '#f3903f' :
+                                                                d > -0.8 ? '#ed683c' :
+                                                                    d > -1 ? '#e93e3a' :
+                                                                        d > -5 ? '#b01111' :
+                                                                            '#5e0000';
+                }
+                function style(feature) {
+                    return {
+                        weight: 2,
+                        opacity: 1,
+                        color: 'white',
+                        dashArray: '3',
+                        fillOpacity: 0.7,
+                        fillColor: getColor(getPopChange(feature.properties.name, year))
+                    };
+                }
+                function highlightFeature(e) {
+                    const layer = e.target;
+                    layer.setStyle({
+                        weight: 5,
+                        color: '#666',
+                        dashArray: '',
+                        fillOpacity: 0.7
+                    });
+                    layer.bringToFront();
+                    info.update(layer.feature.properties);
+                }
+                const geojson = L.geoJson(statesData, {
+                    style,
+                    onEachFeature
+                }).addTo(map);
+                function resetHighlight(e) {
+                    geojson.resetStyle(e.target);
+                    info.update();
+                }
+                function zoomToFeature(e) {
+                    map.fitBounds(e.target.getBounds());
+                }
+                function onEachFeature(feature, layer) {
+                    layer.on({
+                        mouseover: highlightFeature,
+                        mouseout: resetHighlight,
+                        click: zoomToFeature
+                    });
+                }
+                function getPopChange(state, year) {
+                    let entry = data.dataset.filter(x => x.state == state)[0];
+                    return entry[year + " rawchange"];
+                }
+                const legend = L.control({ position: 'bottomright' });
+                legend.onAdd = function (map) {
+                    const div = L.DomUtil.create('div', 'info legend');
+                    const grades = [20, 5, 1, 0.8, 0.6, 0.4, 0.2, 0, -0.2, -0.4, -0.6, -0.8, -1, -5, -20];
+                    //const grades = [-20, -5, -1, -0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8, 1, 5, 20];
+                    const labels = [];
+                    let from, to;
+
+                    for (let i = 0; i < grades.length; i++) {
+                        from = grades[i];
+                        to = grades[i + 1];
+
+                        labels.push(`<i style="background:${getColor(from + 0.0001)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+                    }
+
+                    div.innerHTML = labels.join('<br>');
+                    return div;
+                };
+                legend.addTo(map);
+            }
+            function renderGrid() {
+                let cols = [];
+                cols.push({name: "state", type: "text"});
+                cols.push({ name: data.minYear, type: "text"});
+
+                years.slice(1).forEach(x=>{
+                    cols.push({name: x, type: "text"});
+                });
+                cols.push({name: data.maxYear + " Factors", type: "text"})
+                $("#grid_data").jsGrid({
+                    width: "100%",
+            
+                    inserting: false,
+                    editing: false,
+                    sorting: true,
+                    paging: true,
+                    pageSize: 10,
+
+                    data: data.dataset.map(x=>{
+                        let item = {};
+                        item.state = x.state;
+                        item[data.minYear] = x[data.minYear];
+                        years.slice(1).forEach(y=>{
+                            item[y] = x[y] + ' ' + x[y + " change"];
+                        });
+                        item[data.maxYear + " Factors"] = x[data.maxYear + " Factors"];
+                        return item;
+                    }),
+            
+                    fields: cols
+                });
+
+
+            }
+        });
+    </script>
+</body>
+
+</html>
