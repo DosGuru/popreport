@@ -1,5 +1,7 @@
 const DataModule = (() => {
     console.log("Data Module loaded");
+    //modify url if source API URL changes
+    let url = "https://datausa.io/api/data?drilldowns=State&measures=Population";
     let sourceData = [];
     let transformedData = [];
     let totalData = {};
@@ -61,7 +63,6 @@ const DataModule = (() => {
     }
     //this function performs an HTTPGET against the API URL and returns the data as JSON, then sends it off for transformation
     const getData = () => {
-        let url = "https://datausa.io/api/data?drilldowns=State&measures=Population";
         let sourceData, transformedData;
         try {
             const xhr = new XMLHttpRequest();
