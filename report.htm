@@ -553,20 +553,17 @@
                 let cols = [];
                 cols.push({name: "state", type: "text"});
                 cols.push({ name: data.minYear, type: "text"});
-
                 years.slice(1).forEach(x=>{
                     cols.push({name: x, type: "text"});
                 });
                 cols.push({name: data.maxYear + " Factors", type: "text"})
                 $("#grid_data").jsGrid({
                     width: "100%",
-            
                     inserting: false,
                     editing: false,
                     sorting: true,
                     paging: true,
                     pageSize: 10,
-
                     data: data.dataset.map(x=>{
                         let item = {};
                         item.state = x.state;
@@ -577,14 +574,10 @@
                         item[data.maxYear + " Factors"] = x[data.maxYear + " Factors"];
                         return item;
                     }),
-            
                     fields: cols
                 });
-
-
             }
         });
     </script>
 </body>
-
 </html>
